@@ -1,0 +1,14 @@
+# name of the output folder
+results: "results"
+
+# archive with compressed haplotypes
+agc:
+   HPRC: "/path/to/haplotypes.agc"
+
+sample_sheet: "sample-sheet.tsv"
+cram_ref: "/path/to/reference.fa"
+
+# tab-delimited file of format: <callset>     <sample>_<H1|H2>      name_in_agc
+# specifying the name of each haplotype sequence in the AGC archive.
+# if not provided, pipeline assumes names follow this pattern: <callset>_<sample>_<H1|H2>
+haplotype_names: "names.tsv"

@@ -8,7 +8,7 @@ Pipeline to polish consensus haplotypes generated from phased genotypes based on
 * **haplotype names**: TSV file specifying sequence names of the haplotypes in the AGC archive. If not provided, sequence names are assumed to follow the pattern: `` <callset>_<sample>_<H1|H2> ``. Required columns (in that order):
 
   ```
-   <callset name>     <sample>_<H1|H2>      <sequence name in AGC>
+   <callset name>   <sample>    <hap1|hap2> <sequence name in AGC>
   ```
 
 * **sample sheet**: TSV file providing paths to Illumina and long read (ONT for HiFi) data. Required columns (in that order):
@@ -51,7 +51,9 @@ haploid_chroms: "path/to/haploid-chroms.txt"
 haplotype_names: "path/to/names.tsv"
 ```
 
-Then, run the pipeline using snakemake, e.g. using:
+The pipeline also needs to be provided with a singularity container for DeepVariant. Please put a sif file named ``deepvariant.sif`` to ``workflow/container/``.
+
+Finally, run the pipeline using snakemake, e.g. using:
 
 ```
 snakemake --use-conda --use-singularity -j <nr_cores>

@@ -1,0 +1,3 @@
+SampleID	SampleIllumina	SampleLong
+HG00096	/gpfs/project/projects/medbioinf/data/illumina_nygc/output/interleaved/PRJEB31736.2504/HG00096_ERR3240114.fasta.gz	/gpfs/project/projects/medbioinf/data/1000G-ont/t2t/HG00096.t2t.cram	ONT
+HG03548	/gpfs/project/projects/medbioinf/data/illumina_nygc/output/interleaved/PRJEB31736.2504/HG03548_ERR3242571.fasta.gz	/gpfs/project/projects/medbioinf/data/1000G-ont/t2t/HG03548.t2t.cram	ONT

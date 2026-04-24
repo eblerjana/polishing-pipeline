@@ -1,0 +1,104 @@
+import sys
+configfile: "config/config.yaml"
+
+RESULTS = config["results"]
+AGC = config["agc"]
+ILLUMINA = {}
+ONT = {}
+SAMPLES = []
+CRAM_REF = config["cram_ref"]
+READ_TECH = {}
+
+WINDOW_WIDTHS = [25] #, 100, 250]
+
+#### check if required input files are provided
+
+if not config["results"]:
+	raise RuntimeError("No results name provided.")
+	sys.exit(1)
+
+if not config["sample_sheet"]:
+	raise RuntimeError("No sample_sheet provided.")
+	sys.exit(1)
+
+if not config["agc"]:
+	raise RuntimeError("No agc archive provided.")
+	sys.exit(1)
+
+
+#### parse the sample sheet
+
+for line in open(config["sample_sheet"], 'r'):
+	if line.startswith("#"):
+		continue
+	fields = line.strip().split('\t')
+
+	if len(fields) < 4:
+		raise RuntimeError("File " + config["sample_sheet"] + " is malformatted. Too few columns.")
+		sys.exit(1)
+
+	sample = fields[0]
+	SAMPLES.append(sample)
+	ILLUMINA[sample] = fields[1]
+	ONT[sample] = fields[2]
+	READ_TECH[sample] = fields[3]
+
+
+#### map consensus haplotypes to file names
+
+CONSENSUS = {}
+CALLSETS = config["agc"].keys()
+
+# if names are provided for haplotypes, parse them from file
+if config["haplotype_names"]:
+	for line in open(config["haplotype_names"], 'r'):
+		if line.startswith('#'):
+			continue
+		fields = line.strip().split('\t')
+		if len(fields) < 4:
+			raise RuntimeError("File " + config["haplotype_names"] + " is malformatted. Too few columns.")
+			sys.exit(1)
+
+		callset = fields[0]
+		sample = fields[1]
+		haplotype = fields[2]
+
+		if haplotype not in ["hap1", "hap2"]:
+			raise RuntimeError("Haplotype field in " + config["haplotype_names"] + " is malformatted. Must be hap1 or hap2.")
+			sys.exit(1)
+
+		if not callset in CONSENSUS:
+			CONSENSUS[callset] = {}
+		CONSENSUS[callset][(sample, haplotype)] = fields[3]
+
+
+# fill in default names for samples/haplotypes not provided
+for callset in CALLSETS:
+	for sample in SAMPLES:
+		for haplotype in ["hap1", "hap2"]:
+			if callset not in CONSENSUS:
+				CONSENSUS[callset] = {}
+			if (sample, haplotype) not in CONSENSUS[callset]:
+				CONSENSUS[callset][(sample, haplotype)] = "_".join([callset, "all", sample, haplotype, "consensus"])
+
+print(CONSENSUS)
+
+
+#### main rule
+
+include: "rules/polish-haplotypes.smk"
+include: "rules/polish-haplotypes-no-svs.smk"
+include: "rules/polish-haplotypes-only-snps.smk"
+
+rule all:
+	input:
+#		expand("{results}/polishing/{callset}/all/polished/{sample}_{haplotype}.fa", results = RESULTS, callset = CALLSETS, sample = SAMPLES, haplotype = ["hap1", "hap2"]),
+		expand("{results}/polishing/{callset}/all/polished/{callset}_{windowsize}_polished.agc", results = RESULTS, callset = CALLSETS, sample = SAMPLES, windowsize = WINDOW_WIDTHS),
+		expand("{results}/polishing/{callset}/all/errors/errors_{sample}_{haplotype}_{windowsize}.stats", results = RESULTS, callset = CALLSETS, sample = SAMPLES, haplotype = ["hap1", "hap2"], windowsize = WINDOW_WIDTHS),
+
+#		expand("{results}/polishing/{callset}/no-svs/polished/{callset}_{windowsize}_polished.agc", results = RESULTS, callset = CALLSETS, sample = SAMPLES, windowsize = WINDOW_WIDTHS),
+#		expand("{results}/polishing/{callset}/no-svs/errors/errors_{sample}_{haplotype}_{windowsize}.stats", results = RESULTS, callset = CALLSETS, sample = SAMPLES, haplotype = ["hap1", "hap2"], windowsize = WINDOW_WIDTHS),
+
+#		expand("{results}/polishing/{callset}/only-snps/polished/{callset}_{windowsize}_polished.agc", results = RESULTS, callset = CALLSETS, sample = SAMPLES, windowsize = WINDOW_WIDTHS),
+#		expand("{results}/polishing/{callset}/only-snps/errors/errors_{sample}_{haplotype}_{windowsize}.stats", results = RESULTS, callset = CALLSETS, sample = SAMPLES, haplotype = ["hap1", "hap2"], windowsize = WINDOW_WIDTHS)
+

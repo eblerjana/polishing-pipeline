@@ -1,0 +1,14 @@
+# name of the output folder
+results: "results-testrun-hifi"
+
+# archive with compressed haplotypes
+agc:
+   PanGenie-SHAPEIT: "PanGenie-SHAPEIT_all_consensus-haplotypes.agc"
+
+sample_sheet: "sample-sheet-hifi.tsv"
+cram_ref: "/gpfs/project/projects/medbioinf/users/ebler/long-read-1kg/data/1KG_ONT_VIENNA_hg38.fa"
+
+# tab-delimited file of format: <callset>     <sample>_<H1|H2>      name_in_agc
+# specifying the name of each haplotype sequence in the AGC archive.
+# if not provided, pipeline assumes names follow this pattern: <callset>_<sample>_<H1|H2>
+haplotype_names: "names-hifi.tsv"

@@ -1,0 +1,44 @@
+
+# PanGenie inputs
+panel_bi: "input-data/MC-hgsvc3-hprc-chm13_filtered_ids_biallelic.vcf.gz"
+panel_multi: "input-data/MC-hgsvc3-hprc-chm13_filtered_ids.vcf.gz"
+reference: "input-data/chm13v2.0.fa"
+reads:
+    HG00733: "/gpfs/project/projects/medbioinf/data/illumina_nygc/output/interleaved/PRJEB36890.698/HG00733_ERR3988823.fasta.gz"
+    NA12329: "/gpfs/project/projects/medbioinf/data/illumina_nygc/output/interleaved/PRJEB36890.698/NA12329_ERR3989317.fasta.gz" #EUR
+    NA20847: "/gpfs/project/projects/medbioinf/data/illumina_nygc/output/interleaved/PRJEB31736.2504/NA20847_ERR3239999.fasta.gz" #SAS
+    NA19317: "/gpfs/project/projects/medbioinf/data/illumina_nygc/output/interleaved/PRJEB31736.2504/NA19317_ERR3239712.fasta.gz" #AFR
+    HG01358: "/gpfs/project/projects/medbioinf/data/illumina_nygc/output/interleaved/PRJEB36890.698/HG01358_ERR3988875.fasta.gz" #AMR
+    NA18989: "/gpfs/project/projects/medbioinf/data/illumina_nygc/output/interleaved/PRJEB31736.2504/NA18989_ERR3239679.fasta.gz" #EAS
+
+leave_one_out_samples:
+    - HG00733
+    - NA12329
+    - NA20847
+    - NA19317
+    - HG01358
+    - NA18989
+
+sampling_sizes:
+#        - 15-10x10000
+#        - 15-10x1
+        - 15-10x0.01
+#        - 15-5x10000
+#        - 15-5x1
+        - 15-5x0.01
+#        - 15-0x10000
+#        - 15-0x1
+        - 15-0x0.01
+
+
+subsetting_sizes:
+        - 108
+        - 15
+#        - 10
+#        - 5
+#        - 2  # skipping this for now because it's very slow (> 10hrs)
+
+evaluation_regions: {}
+
+# name of the output folder
+outname: "results-3f73815-hgsvc3"
