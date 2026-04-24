@@ -5,6 +5,8 @@ outprefix = sys.argv[2]
 
 for line in open(fai, 'r'):
 	fields = line.strip().split()
+	if int(fields[1]) < 500000:
+		continue
 	with open(outprefix + fields[0] + '.txt', 'w') as outfile:
 		outfile.write(fields[0] + '\n')
 

@@ -1,4 +1,6 @@
 import sys
+from collections import defaultdict
+
 configfile: "config/config.yaml"
 
 RESULTS = config["results"]
@@ -9,6 +11,7 @@ SAMPLES = []
 CRAM_REF = config["cram_ref"]
 READ_TECH = {}
 
+HAPLOID_CHROMS = defaultdict(lambda: [])
 WINDOW_WIDTHS = [25] #, 100, 250]
 
 #### check if required input files are provided
@@ -82,6 +85,15 @@ for callset in CALLSETS:
 				CONSENSUS[callset][(sample, haplotype)] = "_".join([callset, "all", sample, haplotype, "consensus"])
 
 print(CONSENSUS)
+
+# parse names of haploid chromosomes if available
+if config["haploid_chroms"]:
+	for line in open(config["haploid_chroms"], 'r'):
+		fields = line.strip().split()
+		chroms = [c for c in fields[1].split(',')]
+		HAPLOID_CHROMS[fields[0]] = chroms
+
+print(HAPLOID_CHROMS)
 
 
 #### main rule

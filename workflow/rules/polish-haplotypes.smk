@@ -191,6 +191,8 @@ rule polish_call_small_variants:
 	resources:
 		mem_mb = 50000,
 		walltime = "07:00:00"
+	params:
+		haploid = lambda wildcards: ",".join([h for h in HAPLOID_CHROMS[wildcards.sample]])
 	shell:
 		"""
 		 /opt/deepvariant/bin/run_deepvariant \
@@ -203,8 +205,9 @@ rule polish_call_small_variants:
 		 --vcf_stats_report=true \
 		 --disable_small_model=true \
 		 --regions {wildcards.chrom} \
+		 --call_variants_extra_args="allow_empty_examples=true" \
 		 --sample_name={wildcards.sample}-{wildcards.haplotype} \
-		 --haploid_contigs="chrX,chrY,X,Y" &> {log}
+		 --haploid_contigs="{params.haploid}" &> {log}
 		"""
 
 
@@ -349,6 +352,24 @@ rule detect_switch_blocks:
 		zcat {input.vcf} | python3 workflow/scripts/detect-switched-blocks.py {input.fai} > {output}
 		"""
 
+def input_polish_call_svs(wildcards):
+	if wildcards.chrom in HAPLOID_CHROMS[wildcards.sample]:
+		return "{results}/polishing/{callset}/ont/ont_{sample}_{haplotype}_{chrom}.bam".format(
+				results = wildcards.results,
+				callset = wildcards.callset,
+				haplotype = wildcards.haplotype,
+				sample = wildcards.sample,
+				chrom = wildcards.chrom
+			) 
+	else:
+		return "{results}/polishing/{callset}/all/haplotag/split_{sample}_{haplotype}_{chrom}.bam".format(
+			results = wildcards.results,
+			callset = wildcards.callset,
+			haplotype = wildcards.haplotype,
+			sample = wildcards.sample,
+			chrom = wildcards.chrom
+			)
+
 
 rule polish_call_svs:
 	"""
@@ -356,7 +377,7 @@ rule polish_call_svs:
 	Keep only homozygous calls and remove BND calls.
 	"""
 	input:
-		bam = "{results}/polishing/{callset}/all/haplotag/split_{sample}_{haplotype}_{chrom}.bam",
+		bam = input_polish_call_svs,
 		reference = "{results}/polishing/{callset}/consensus/{sample}_{haplotype}.fa",
 #		bed = "{results}/polishing/{callset}/all/haplotag/switched_{sample}_{haplotype}_{chrom}.bed"
 	output:

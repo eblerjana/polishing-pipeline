@@ -8,6 +8,10 @@ agc:
 sample_sheet: "sample-sheet.tsv"
 cram_ref: "/path/to/reference.fa"
 
+# optional: tab-delimited file: <sample>        <comma sep. names of haploid chroms>
+# if not available, set to ""
+haploid_chroms: "haploid-chroms.txt"
+
 # tab-delimited file of format: <callset>     <sample>_<H1|H2>      name_in_agc
 # specifying the name of each haplotype sequence in the AGC archive.
 # if not provided, pipeline assumes names follow this pattern: <callset>_<sample>_<H1|H2>
